@@ -122,6 +122,16 @@ def createPattern(patternNumber):
             pattern.append(row)
         return pattern
 
+def nextPattern(patternNumber):
+    for repeat in range(1,4):
+        print("Running Next Pattern")
+        if patternNumber == 4:
+            randomReplace(0)
+            patternNumber += 1
+        else:
+            patternNumber += 1
+            randomReplace(patternNumber)
+
 def randomReplace(patternNumber):
     #randomly replace elements until a pattern has been achieved
     global grid
@@ -130,8 +140,6 @@ def randomReplace(patternNumber):
     createTracker()
     pattern = createPattern(patternNumber)
     stripTracker(pattern)
-    print("Starting from Random " + str(len(grid)) + " x " + str(len(grid)) + " grid.")
-    print("Modifying values to achieve pattern... \n")
     printGrid(grid)
 
     while tracker != []:
@@ -146,21 +154,26 @@ def randomReplace(patternNumber):
         if len(tracker[selectedRow]) == 0:
             tracker.pop(selectedRow)
 
-
+    print("*** Pattern Achieved *** \n")
 
 #-----------------------------------------------------------#
 
 size = int(input("please enter a size between 5 & 50: \n"))
 if size >= 5 and size <= 50:
     create(size)
-else:
-    print("incorrect size entered")
-pattern = int(input("please select a pattern from the following list: \n 0. All 00000's \n 1. All 11111's \n 2. Alternating 101010 \n 3. Alternating 101010 same each line \n 4. Alternating lines of 1's and 0's \n"))
+    pattern = int(input("please select a pattern from the following list: \n 0. All 00000's \n 1. All 11111's \n 2. Alternating 101010 \n 3. Alternating 101010 same each line \n 4. Alternating lines of 1's and 0's \n"))
 
-if pattern >= 0 and pattern <= 4:
-    randomReplace(pattern)
+    if pattern >= 0 and pattern <= 4:
+        print("Starting with a " + str(size) + " X " + str(size) + " grid.")
+        print("Modifying values to achieve pattern... \n")
+        randomReplace(pattern)
+    else:
+        print("incorrect menu selection entered")
 else:
     print("incorrect size entered")
+
+nextPattern(pattern + 1)
+
 
 
 
