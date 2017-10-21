@@ -126,7 +126,8 @@ def nextPattern(patternNumber):
     for repeat in range(1,4):
         print("Running Next Pattern")
         if patternNumber == 4:
-            randomReplace(0)
+            patternNumber = 0
+            randomReplace(patternNumber)
             patternNumber += 1
         else:
             patternNumber += 1
