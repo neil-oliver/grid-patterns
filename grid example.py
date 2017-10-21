@@ -19,7 +19,6 @@ def create(size):
         for x in range(size):
             row.append(random.randrange(2))
         grid.append(row)
-    printGrid(grid)
 
 
 def createTracker():
@@ -51,16 +50,16 @@ def stripTracker(pattern):
             tracker[rowIndex] = newRow
             if tracker[rowIndex] == []:
                 del tracker[rowIndex]
-        printGrid(tracker)
 
 
 def createPattern(patternNumber):
     #create a grid with a set pattern
     global grid
+    pattern = []
+    value = 1
 
     if patternNumber == 0:
         # create a grid of all 0's
-        pattern = []
         for i in range(0,len(grid)):
             row = []
             for x in range(0,len(grid)):
@@ -69,26 +68,71 @@ def createPattern(patternNumber):
         return pattern
 
     elif patternNumber == 1:
-            # create a grid of all 1's
-            pattern = []
-            for i in range(0, len(grid)):
-                row = []
+        # create a grid of all 1's
+        for i in range(0, len(grid)):
+            row = []
+            for x in range(0, len(grid)):
+                row.append(1)
+            pattern.append(row)
+        return pattern
+
+    elif patternNumber == 2:
+        #create a grid of alternating 1's and 0's
+        for i in range(0, len(grid)):
+            row = []
+            for x in range(0, len(grid)):
+                if value == 1:
+                    row.append(value)
+                    value = 0
+                else:
+                    row.append(value)
+                    value = 1
+            pattern.append(row)
+        return pattern
+
+    elif patternNumber == 3:
+        #create a grid of alternating 1's and 0's starting on same number
+        for i in range(0, len(grid)):
+            row = []
+            value = 1
+            for x in range(0, len(grid)):
+                if value == 1:
+                    row.append(value)
+                    value = 0
+                else:
+                    row.append(value)
+                    value = 1
+            pattern.append(row)
+        return pattern
+
+    elif patternNumber == 4:
+        #create a grid of alternating lines of 1's and 0's
+        for i in range(0, len(grid)):
+            row = []
+            if value == 1:
                 for x in range(0, len(grid)):
-                    row.append(1)
-                pattern.append(row)
-            return pattern
+                    row.append(value)
+                value = 0
+            else:
+                for x in range(0, len(grid)):
+                    row.append(value)
+                value = 1
 
 
-def randomReplace():
+            pattern.append(row)
+        return pattern
+
+def randomReplace(patternNumber):
     #randomly replace elements until a pattern has been achieved
     global grid
     global tracker
 
     createTracker()
-    pattern = createPattern(0)
-    printGrid(pattern)
+    pattern = createPattern(patternNumber)
     stripTracker(pattern)
-
+    print("Starting from Random " + str(len(grid)) + " x " + str(len(grid)) + " grid.")
+    print("Modifying values to achieve pattern... \n")
+    printGrid(grid)
 
     while tracker != []:
 
@@ -96,7 +140,7 @@ def randomReplace():
         selectedCell = random.randint(0,len(tracker[selectedRow]) - 1)
 
         contents = tracker[selectedRow].pop(selectedCell)
-        grid[contents[0]][contents[1]] = 1 #this is where it will replace according to a pattern
+        grid[contents[0]][contents[1]] = pattern[contents[0]][contents[1]]
         printGrid(grid)
 
         if len(tracker[selectedRow]) == 0:
@@ -109,8 +153,14 @@ def randomReplace():
 size = int(input("please enter a size between 5 & 50: \n"))
 if size >= 5 and size <= 50:
     create(size)
-    randomReplace()
 else:
     print("incorrect size entered")
+pattern = int(input("please select a pattern from the following list: \n 0. All 00000's \n 1. All 11111's \n 2. Alternating 101010 \n 3. Alternating 101010 same each line \n 4. Alternating lines of 1's and 0's \n"))
+
+if pattern >= 0 and pattern <= 4:
+    randomReplace(pattern)
+else:
+    print("incorrect size entered")
+
 
 
