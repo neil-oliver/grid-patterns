@@ -18,11 +18,14 @@ def drawGrid(grid):
     # Draw the grid
     for row in range(len(grid)):
         for column in range(len(grid)):
-            color = WHITE
+            if grid[row][column] == 0:
+                img = pygame.image.load('curves_v.bmp')
+                color = WHITE
             if grid[row][column] == 1:
+                img = pygame.image.load('curves_h.bmp')
                 color = BLACK
-            pygame.draw.rect(screen, color,
-                             [(WIDTH) * column, (HEIGHT) * row, WIDTH, HEIGHT])
+            screen.blit(pygame.transform.scale(img, (int(WIDTH), int(HEIGHT))), (int(HEIGHT * column), int(HEIGHT * row)))
+            #pygame.draw.rect(screen, color,[(WIDTH) * column, (HEIGHT) * row, WIDTH, HEIGHT])
 
 
 def createGrid(size):
@@ -205,7 +208,7 @@ RED = (255, 0, 0)
 pygame.init()
 
 # Set the HEIGHT and WIDTH of the screen
-WINDOW_SIZE = [600, 600]
+WINDOW_SIZE = [900, 900]
 screen = pygame.display.set_mode(WINDOW_SIZE)
 
 WIDTH = WINDOW_SIZE[0] / len(grid)
@@ -247,6 +250,6 @@ while not done:
 
     pygame.display.flip()
 
-    clock.tick(15)
+    clock.tick(60)
 
 pygame.quit()
