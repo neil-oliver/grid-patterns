@@ -334,11 +334,9 @@ while not done:
 
             if square[3] == 1:
 
-                img = pygame.image.load('curves_h.bmp')
-                img = img.convert()
+                img = pygame.image.load('curves_h.bmp').convert_alpha()
             else:
-                img = pygame.image.load('curves_v.bmp')
-                img = img.convert()
+                img = pygame.image.load('curves_v.bmp').convert_alpha()
 
             img = pygame.transform.scale(img, (int(WIDTH), int(HEIGHT)))
 
