@@ -19,11 +19,10 @@ pattern = []
 
 def rotate_and_center(ds, x, y, image, degrees):
     #rotating a square
+    global screen
     rotated = pygame.transform.rotate(image, degrees)
     rect = rotated.get_rect()
-    ds.blit(rotated, (x - rect.center[0], y - rect.center[1]))
-
-
+    screen.blit(rotated, (x - rect.center[0], y - rect.center[1]))
 
 def printGrid(grid):
     #pretty printing of grid
@@ -31,7 +30,9 @@ def printGrid(grid):
         print(row)
     print("\n")
 
+
 def drawGrid(grid):
+    global screen
     # Draw the grid
     for row in range(len(grid)):
         for column in range(len(grid)):
@@ -43,6 +44,7 @@ def drawGrid(grid):
                 color = BLACK
             pygame.draw.rect(screen, color,[(WIDTH) * column, (HEIGHT) * row, WIDTH, HEIGHT]) #backup in case of image not loading
             screen.blit(pygame.transform.scale(img, (int(WIDTH), int(HEIGHT))), (int(HEIGHT * column), int(HEIGHT * row)))
+
 
 def updateSquare(row,column):
     #draw single square
@@ -77,6 +79,7 @@ def createTracker():
         for cellIndex in range(0, len(grid)):
             row.append([rowIndex,cellIndex])
         tracker.append(row)
+
 
 def stripTracker(pattern):
     #strip the tracking grid of any references where the element is already the correct value
@@ -243,6 +246,7 @@ def createPattern(patternNumber):
 
         return pattern
 
+
 def nextPattern(patternNumber):
     #loops through all of the patterns
     global pattern
@@ -261,52 +265,9 @@ def nextPattern(patternNumber):
     pattern = []
     print("Pattern No.: " + str(patternNumber))
     pattern = createPattern(patternNumber)
+    printGrid(pattern)
     stripTracker(pattern)
     return patternNumber
-
-def randomReplace():
-    #randomly replace elements until a pattern has been achieved
-    global grid
-    global tracker
-    global pattern
-    global patternSelection
-    global screen
-    global WIDTH
-    global HEIGHT
-    global degrees
-
-
-    if tracker != []:
-
-        selectedRow = random.randint(0, len(tracker) - 1)
-        selectedCell = random.randint(0,len(tracker[selectedRow]) - 1)
-
-        contents = tracker[selectedRow].pop(selectedCell)
-        grid[contents[0]][contents[1]] = pattern[contents[0]][contents[1]]
-        updateSquare(contents[0],contents[1])
-
-        #----------------------
-        #testing rotations - not working yet
-        '''
-        img = pygame.image.load('curves_v.bmp')
-        img = pygame.transform.scale(img, (int(WIDTH), int(HEIGHT)))
-
-        # rotate the image around 360 degrees but centralise it to x and y
-        rotate_and_center(screen, int(HEIGHT * contents[1]), int(HEIGHT * contents[0]), img, degrees)
-
-        # increment the rotation. reset rotation if degrees is greater than 359 (not necessary but cleaner IMO)
-        if degrees < 90:
-            degrees += 10
-        else:
-            degrees = 0
-        '''
-
-        if len(tracker[selectedRow]) == 0:
-            tracker.pop(selectedRow)
-    else:
-        createTracker()
-        patternSelection = nextPattern(patternSelection)
-
 
 #-----------------------------------------------------------#
 
@@ -346,14 +307,59 @@ drawGrid(grid)
 #for use with rotation
 degrees = 0
 
+#Rotating Tracker
+rotatingTracker = []
+
 while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
 
-    randomReplace()
+    if tracker != []:
 
-    pygame.display.flip()
+        selectedRow = random.randint(0, len(tracker) - 1)
+        selectedCell = random.randint(0,len(tracker[selectedRow]) - 1)
+
+        contents = tracker[selectedRow].pop(selectedCell)
+        grid[contents[0]][contents[1]] = pattern[contents[0]][contents[1]]
+        #updateSquare(contents[0],contents[1])
+
+
+        #----------------------
+        #testing rotations - not working yet
+
+        rotatingTracker.append([contents[0],contents[1],0, grid[contents[0]][contents[1]]])
+
+        for index, square in enumerate(rotatingTracker):
+
+            if square[3] == 1:
+
+                img = pygame.image.load('curves_h.bmp')
+                img = img.convert()
+            else:
+                img = pygame.image.load('curves_v.bmp')
+                img = img.convert()
+
+            img = pygame.transform.scale(img, (int(WIDTH), int(HEIGHT)))
+
+            # rotate the image around 360 degrees but centralise it to x and y
+            rotate_and_center(screen, int(HEIGHT * square[1]), int(HEIGHT * square[0]), img, square[2])
+
+            # increment the rotation. reset rotation if degrees is greater than 359 (not necessary but cleaner IMO)
+            if square[2] < 90:
+                rotatingTracker[index][2] += 10
+            else:
+                del rotatingTracker[index]
+
+
+        if len(tracker[selectedRow]) == 0:
+            tracker.pop(selectedRow)
+    else:
+        #selects the next tracker
+        createTracker()
+        patternSelection = nextPattern(patternSelection)
+
+    pygame.display.update()
 
     clock.tick(60)
 
